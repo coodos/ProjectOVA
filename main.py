@@ -1,10 +1,17 @@
-import speech_recognition as Recognizer
-import pyttsx3  
-import urbandictionary as ud
-import dictionaryAPI as dictAPI
+# builtins
+import json
+import os
+
+# outcasts
 import bs4
-import requests 
 import duckduckpy as doge
+import pyttsx3
+import requests
+import speech_recognition as Recognizer
+import urbandictionary as ud
+
+# homies
+import dictionaryAPI as dictAPI
 
 # One Class to rule em all
 # One Class to find them 
@@ -99,14 +106,14 @@ class naturalLanguage:
     }
 
 
-    def __init__(self, command):
+    def __init__(self, command, trigger):
 
         self.command = command
        
         for command in list(self.__class__.commands.keys()):
             try: 
                 for cmd in self.__class__.commands[command]: 
-                    if cmd in self.command:
+                    if cmd in self.command and trigger in self.command:
                         try: 
                             argument = utilities.greaterOf(self.command.split(cmd)[0], self.command.split(cmd)[1])
                         except IndexError: 
@@ -143,6 +150,11 @@ class utilities:
         engine.say(command)  
         engine.runAndWait() 
 
+    @staticmethod
+    def writeToJson(data, file = "settings.json"): 
+        with open(file, 'a+') as f: 
+            json.dump(data, f)
+
 
 if __name__ == "__main__":
 
@@ -157,25 +169,39 @@ if __name__ == "__main__":
     engine.setProperty('voice', voices[1].id)   
     engine.setProperty('rate', 140)
 
-    while True: 
+    def main():
+        while True: 
 
-        try: 
-            # { mic ---> google api ---> text } ==> STONKS        
-            # ^ /// ^      
-            with Recognizer.Microphone(device_index=4) as source: 
-                recognizer.adjust_for_ambient_noise(source, duration=0.1)  
-                audio = recognizer.listen(source) 
-                MyText = recognizer.recognize_google(audio) 
-                MyText = MyText.lower()
-                print(MyText)
-                naturalLanguage(MyText)
+            with open('settings.json', 'r') as settingsFile: 
+                settings = json.load(settingsFile)
+                triggerWord = settings["trigger"]
+            try: 
+                # { mic ---> google api ---> text } ==> STONKS        
+                # ^ /// ^      
+                with Recognizer.Microphone(device_index=4) as source: 
+                    recognizer.adjust_for_ambient_noise(source, duration=0.1)  
+                    audio = recognizer.listen(source) 
+                    MyText = recognizer.recognize_google(audio) 
+                    MyText = MyText.lower()
+                    print(MyText)
+                    naturalLanguage(MyText, triggerWord)
 
-        # ignore errors like a good programmer LMAO
-        # it's all in ze mind
-        except Recognizer.RequestError: 
-            pass     
+            # ignore errors like a good programmer LMAO
+            # it's all in ze mind
+            except Recognizer.RequestError: 
+                pass     
 
-        # ignore errors like a good programmer LMAO
-        # it's all in ze mind
-        except Recognizer.UnknownValueError: 
-            pass
+            # ignore errors like a good programmer LMAO
+            # it's all in ze mind
+            except Recognizer.UnknownValueError: 
+                pass
+
+    if "settings.json" in os.listdir():
+        main()       
+    
+    else: 
+        settings = {}
+        triggerWord = input("what would you like your personal assistant to be called ?\n--> ")
+        settings['trigger'] = triggerWord
+        utilities.writeToJson(settings)       
+        main()
