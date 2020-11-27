@@ -1,6 +1,7 @@
 import speech_recognition as Recognizer
 import pyttsx3  
 import urbandictionary as ud
+import dictionaryAPI as dictAPI
  
 
 # One Class to rule em all
@@ -18,9 +19,13 @@ class voiceCommands:
     class dictionary: 
 
         def __init__(self, word): 
+            print(f'searching for the meaning of {word}')
             self.word = word
-            self.meaning = ud.define(word)[0].definition
-            utilities.SpeakText(f'according to urban dictionary, the meaning of {self.word} is, {self.meaning}')
+            self.meaning = dictAPI.getMeaning(word)
+            if self.meaning: 
+                utilities.SpeakText(f'the meaning of {self.word} is, {self.meaning}')
+            else: 
+                utilities.SpeakText("hmmmmmmmmmm, I don't know that word")
             
 
     class searchWeb: 
@@ -28,6 +33,12 @@ class voiceCommands:
         def __init__(self, keyword):
             self.keyword = keyword
             print(keyword)
+
+    class urban: 
+
+        def __init__(self, word): 
+            self.word = word
+            urbandict.define('xterm')
 
 
 # Scuffed Natural Language Processing 
@@ -67,6 +78,13 @@ class naturalLanguage:
             {
                 'command': voiceCommands.toDo
             }
+        ], 
+        'urban': [
+            'urban', 
+            'urban dictionary',
+            {
+                'command': voiceCommands.urban
+            } 
         ]
     }
 
