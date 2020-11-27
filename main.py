@@ -2,7 +2,9 @@ import speech_recognition as Recognizer
 import pyttsx3  
 import urbandictionary as ud
 import dictionaryAPI as dictAPI
- 
+import bs4
+import requests 
+import duckduckpy as doge
 
 # One Class to rule em all
 # One Class to find them 
@@ -32,7 +34,11 @@ class voiceCommands:
 
         def __init__(self, keyword):
             self.keyword = keyword
-            print(keyword)
+            response = doge.query(keyword)
+            try:
+                utilities.SpeakText(f'top result on internet says that, {response.related_topics[0].text}')
+            except IndexError: 
+                pass
 
     class urban: 
 
@@ -43,10 +49,8 @@ class voiceCommands:
                 self.meaning = ud.define(word)[0].definition
                 utilities.SpeakText(f"according to urban dictionary, {word} means {self.meaning}")
             except Exception: 
-                utilities.SpeakText("oof, I do not know that. Very sad times.")
+                utilities.SpeakText(f"oof, stupid urban dictionary doesn't even know the meaning of {word}.")
             
-
-
 # Scuffed Natural Language Processing 
 # this class is gonna be * H E C T I C *
 
@@ -75,6 +79,7 @@ class naturalLanguage:
         'web': [
             'search the web for',
             'search the web', 
+            'search ',
             {
                 'command': voiceCommands.searchWeb
             }
@@ -157,7 +162,7 @@ if __name__ == "__main__":
         try: 
             # { mic ---> google api ---> text } ==> STONKS        
             # ^ /// ^      
-            with Recognizer.Microphone() as source: 
+            with Recognizer.Microphone(device_index=4) as source: 
                 recognizer.adjust_for_ambient_noise(source, duration=0.1)  
                 audio = recognizer.listen(source) 
                 MyText = recognizer.recognize_google(audio) 
