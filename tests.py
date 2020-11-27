@@ -1,3 +1,13 @@
-import speech_recognition as sr
-for index, name in enumerate(sr.Microphone.list_microphone_names()):
-    print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
+import pafy
+import vlc
+
+url = "https://www.youtube.com/watch?v=bMt47wvK6u0"
+video = pafy.new(url)
+best = video.getbest()
+playurl = best.url
+Instance = vlc.Instance()
+player = Instance.media_player_new()
+Media = Instance.media_new(playurl)
+Media.get_mrl()
+player.set_media(Media)
+player.play()

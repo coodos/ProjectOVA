@@ -33,9 +33,9 @@ class voiceCommands:
     class searchWeb: 
 
         def __init__(self, keyword):
-            self.keyword = keyword
-            response = doge.query(keyword)
+            self.keyword = keyword  
             try:
+                response = doge.query(keyword)
                 utilities.SpeakText(f'top result on internet says that, {response.related_topics[0].text}')
             except IndexError: 
                 pass
