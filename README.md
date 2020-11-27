@@ -8,7 +8,7 @@
 
 2. cd to folder directory
 
-3. `./venv/Scripts/activate.ps1` on windows, and `source ./venv/Scripts/activate` and I don't give a shit about mac users :)
+3. `./venv/Scripts/activate.ps1` on windows, and `source ./venv/Scripts/activate` on linux, I don't give a shit about mac users :)
 
 4. then run `python main.py`
 
