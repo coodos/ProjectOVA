@@ -37,8 +37,14 @@ class voiceCommands:
     class urban: 
 
         def __init__(self, word): 
+            print(f"searching for {word}")
             self.word = word
-            urbandict.define('xterm')
+            try:
+                self.meaning = ud.define(word)[0].definition
+                utilities.SpeakText(f"according to urban dictionary, {word} means {self.meaning}")
+            except Exception: 
+                utilities.SpeakText("oof, I do not know that. Very sad times.")
+            
 
 
 # Scuffed Natural Language Processing 
@@ -73,28 +79,27 @@ class naturalLanguage:
                 'command': voiceCommands.searchWeb
             }
         ],
+        'urban': [ 
+            'urban dictionary',
+            {
+                'command': voiceCommands.urban
+            } 
+        ],
         'toDo': [
             'to do', 
             {
                 'command': voiceCommands.toDo
             }
-        ], 
-        'urban': [
-            'urban', 
-            'urban dictionary',
-            {
-                'command': voiceCommands.urban
-            } 
-        ]
+        ]        
     }
 
 
     def __init__(self, command):
 
         self.command = command
-        
-        try:
-            for command in self.__class__.commands:
+       
+        for command in list(self.__class__.commands.keys()):
+            try: 
                 for cmd in self.__class__.commands[command]: 
                     if cmd in self.command:
                         try: 
@@ -102,10 +107,9 @@ class naturalLanguage:
                         except IndexError: 
                             argument = self.command.split(command)[0] 
                         finally: 
-                            self.__class__.commands[command][-1]['command'](argument)
-                        break
-        except TypeError: 
-            pass
+                            self.__class__.commands[command][-1]['command'](argument)       
+            except TypeError: 
+                pass
   
 # class related to utilites. 
 # primarily contains static methods
@@ -154,10 +158,11 @@ if __name__ == "__main__":
             # { mic ---> google api ---> text } ==> STONKS        
             # ^ /// ^      
             with Recognizer.Microphone() as source: 
-                recognizer.adjust_for_ambient_noise(source, duration=0.2)  
+                recognizer.adjust_for_ambient_noise(source, duration=0.1)  
                 audio = recognizer.listen(source) 
                 MyText = recognizer.recognize_google(audio) 
                 MyText = MyText.lower()
+                print(MyText)
                 naturalLanguage(MyText)
 
         # ignore errors like a good programmer LMAO
