@@ -8,3 +8,4 @@ def getMeaning(word):
         return data.json()[0]["meanings"][0]["definitions"][0]["definition"]
     except Exception: 
         return None
+

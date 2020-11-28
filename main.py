@@ -4,8 +4,7 @@ import os
 import sys
 import subprocess
 import threading
-import subprocess
-
+import difflib
 # outcasts
 import bs4
 import duckduckpy as doge # for ze MayMays B)
@@ -21,6 +20,7 @@ import dictionaryAPI as dictAPI
 from winApps import winapps
 import chromecastchecker as ccc
 from lowerUtils import lowerUtils as lU 
+from newsApi import news as newsApi
 
 # One Class to rule em all
 # One Class to find them 
@@ -32,16 +32,28 @@ class voiceCommands:
     # this class deals with launching windows apps 
     # that are installed onto thy systeme 
 
+    class news: 
+
+        def __init__(self, arg, fullcmd):
+            print('here')
+            print(newsApi.getNews())
+            utilities.SpeakText(newsApi.getNews())
+        
+
     class win:
 
         class launchThread: 
 
             def __init__(self, app):
-                self.thread = threading.Thread(target=winapps.launch, args=(app, )) 
-                self.thread.daemon = True
-                self.thread.start()
+                try:
+                    self.thread = threading.Thread(target=winapps.launch, args=(app, )) 
+                    self.thread.daemon = True
+                    self.thread.start()
+                except Exception: 
+                    utilities.SpeakText(f"Oops I ran into an issue, I am unable to launch {app} at the moment")
 
         def __init__(self, app, fullcmd):
+            utilities.SpeakText(f"Opening {app}")
             voiceCommands.win.launchThread(winapps.searchForApp(app))
             
         
@@ -375,9 +387,20 @@ class naturalLanguage:
         'win': [
             'open the app', 
             'launch ', 
-            'open ', 
+            'open ',
+            'run ',  
             {
                 'command': voiceCommands.win
+            }
+        ],
+        'news': [
+            'get news', 
+            'latest news', 
+            'news flash', 
+            'what is happing',
+            'get headlines',
+            {
+                'command': voiceCommands.news
             }
         ]    
     }
@@ -390,7 +413,7 @@ class naturalLanguage:
         for command in list(self.__class__.commands.keys()):
             try: 
                 for cmd in self.__class__.commands[command]: 
-                    if cmd in self.command and trigger in self.command:
+                    if cmd in self.command:
                         try: 
                             self.command = self.command.split(trigger, 1)[1]
                             argument = utilities.greaterOf(self.command.split(cmd, 1)[0], self.command.split(cmd, 1)[1])
@@ -520,7 +543,8 @@ if __name__ == "__main__":
                     MyText = recognizer.recognize_google(audio) 
                     MyText = MyText.lower()
                     print(MyText)
-                    naturalLanguage(MyText, triggerWord)
+                    if triggerWord in MyText: 
+                        naturalLanguage(MyText, triggerWord)
 
             # ignore errors like a good programmer LMAO
             # it's all in ze mind
