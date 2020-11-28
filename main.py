@@ -182,6 +182,10 @@ class utilities:
 
     @staticmethod
     def runConfigurator():
+        try: 
+            os.remove("settings.json")
+        except Exception: 
+            pass
         settings = {}
         triggerWord = input("what would you like your personal assistant to be called ?\n--> ")
         settings['trigger'] = triggerWord    
@@ -203,6 +207,8 @@ if __name__ == "__main__":
     # so here we start the shitty recognizer
     # code totally not stolen from GeeksForGeeks
     # :sweatsmile: 
+    recognizer = Recognizer.Recognizer()  
+    engine = pyttsx3.init() 
     
     def main():
 
@@ -214,21 +220,19 @@ if __name__ == "__main__":
                 triggerWord = settings["trigger"]
                 micId = int(settings["micID"])
                 voiceGender = settings['gender']
-        except KeyError: 
+        except KeyError or json.decoder.JSONDecodeError: 
             print("your local configuration appears to have been corrupted")
             print("Press [y] to continue with resseting your voice assistant or [n] to cancel")
             inp = input("--> ")
             if inp.lower().strip() == "y": 
                 utilities.runConfigurator()
+                main()
             elif inp.lower().strip() == "n":
                 sys.exit()
             else: 
                 print("ALERT : invalid input\n")
                 main()
-
-
-        recognizer = Recognizer.Recognizer()  
-        engine = pyttsx3.init() 
+        
         # setting a female voice 
         voices = engine.getProperty('voices')   
         if voiceGender == "m":                
