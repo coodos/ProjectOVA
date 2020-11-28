@@ -15,6 +15,7 @@ from selenium import webdriver
 
 # homies
 import dictionaryAPI as dictAPI
+from winApps import winapps
 
 # One Class to rule em all
 # One Class to find them 
@@ -22,6 +23,15 @@ import dictionaryAPI as dictAPI
 # in the darkness and bind them 
 
 class voiceCommands: 
+
+    # this class deals with launching windows apps 
+    # that are installed onto thy systeme 
+
+    class win: 
+
+        def __init__(self, app, fullcmd):
+            winapps.launch(winapps.searchForApp(app))
+        
 
     # this class is for the sole purpose of todos 
     # probably the largest subclass yet * G U L P S * 
@@ -329,12 +339,20 @@ class naturalLanguage:
                 'command': voiceCommands.youtubeSearch
             }
         ],
-        'connect':[
+        'connect': [
             'connect to',
             'cast',
             'cast to',
             {
                 'command': voiceCommands.googleCast
+            }
+        ],
+        'win': [
+            'open the app', 
+            'launch ', 
+            'open ', 
+            {
+                'command': voiceCommands.win
             }
         ]    
     }

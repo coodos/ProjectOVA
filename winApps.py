@@ -45,5 +45,3 @@ class winapps:
     def launch(cls, app): 
         os.chdir('/'.join(app.split('/')[0:-1]))
         os.system(app.split('/')[-1])
-
-winapps.launch(winapps.searchForApp("zoom"))
