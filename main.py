@@ -3,7 +3,6 @@ import json
 import os
 import sys
 import threading
-import multiprocessing
 
 # outcasts
 import bs4
@@ -17,7 +16,6 @@ import pychromecast
 
 # homies
 import dictionaryAPI as dictAPI
-
 from winApps import winapps
 import chromecastchecker as ccc
 
@@ -31,10 +29,18 @@ class voiceCommands:
     # this class deals with launching windows apps 
     # that are installed onto thy systeme 
 
-    class win: 
+    class win:
+
+        class launchThread: 
+
+            def __init__(self, app):
+                self.thread = threading.Thread(target=winapps.launch, args=(app, )) 
+                self.thread.daemon = True
+                self.thread.start()
 
         def __init__(self, app, fullcmd):
-            winapps.launch(winapps.searchForApp(app))
+            voiceCommands.win.launchThread(winapps.searchForApp(app))
+            
         
 
     # this class is for the sole purpose of todos 
