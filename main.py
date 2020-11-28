@@ -5,12 +5,14 @@ import sys
 
 # outcasts
 import bs4
-import duckduckpy as doge
+import duckduckpy as doge # for ze MayMays B)
 import pyttsx3
 import requests
 import speech_recognition as Recognizer
 import urbandictionary as ud
 from youtubesearchpython import SearchVideos
+
+from selenium import webdriver
 
 # homies
 import dictionaryAPI as dictAPI
@@ -22,35 +24,165 @@ import dictionaryAPI as dictAPI
 
 class voiceCommands: 
 
+    # this class is for the sole purpose of todos 
+    # probably the largest subclass yet * G U L P S * 
+
     class toDo: 
 
-        def __init__(self, task):
+        # initialise a todos object and process 
+        # the voice command that voice provided 
+        # by it's masters
+
+        def __init__(self, task, fullcmd):
+            print(f"todo {task}")
             self.task = task
+            self.fullcmd = fullcmd
             self.processTodo()
 
-        def processTodo(): 
+        # scan the todos.json file and see that 
+        # what on earth are the person's to dos 
+
+        @staticmethod
+        def listToDos(lst = ''): 
+            print("listing")
+
+            try: 
+                with open("todos.json", 'a+') as jsonFile: 
+                    jsonFile.seek(0)
+                    utilities.SpeakText("you have the to dos. ")
+                    for todo in json.load(jsonFile)['todos']: 
+                        utilities.SpeakText(todo) 
+
+            except json.decoder.JSONDecodeError:
+                utilities.SpeakText("it seems that you don't have anything to do! enjoy your day!")    
+    
+        # listen to the to dos on voice 
+        # and then add the to dos to the 
+        # todos.json file and if it doesn't 
+        # exist then heck create one smh
+
+        @staticmethod
+        def addToDos(task): 
+            try: 
+                with open('todos.json', 'r') as jsonFile: 
+                    out = {}
+                    todos = json.load(jsonFile)["todos"]
+                    todos.append(task.strip())
+                    out["todos"] = todos
+                os.remove("todos.json")
+                utilities.writeToJson(out, "todos.json")
+            except Exception as e:
+                print(e) 
+                try: 
+                    os.remove("todos.json")
+                except Exception:
+                    pass
+                todos = {"todos" : []}
+                todos["todos"].append(task.strip())
+                utilities.writeToJson(todos, "todos.json")
+            finally: 
+                utilities.SpeakText(f"Added the to do, {task}")
+
+        # remove the lonely todo that has been used 
+        # poor lil to do was emotionally tortured :(
+        
+        @staticmethod
+        def remove(task):
+            with open("todos.json", 'r') as jsonFile:
+                data = json.load(jsonFile)
+            try: 
+                data["todos"].pop(data["todos"].index(task.strip()))
+                os.remove("todos.json")
+                utilities.writeToJson(data, 'todos.json')
+                utilities.SpeakText(f"Removed to do, {task}")
+            except Exception as e:
+                print(e) 
+                utilities.SpeakText("I can't seem to find that task")
+
+        # perform a mass genocide of todos OwO
+
+        @staticmethod
+        def removeAll(lst):
+            try: 
+                os.remove("todos.json")
+            except FileNotFoundError: 
+                utilities.SpeakText("You don't seem to have any thing to do ")
+            finally: 
+                utilities.SpeakText("Removed all todos")
+
+        # the dreaded SCUFFED NLP UwU
+
+        def processTodo(self):             
+
             todoCommands = {
                 "list": [
                     'what are my to dos',
                     'what are the things to do', 
                     'show my to dos', 
                     'list my to dos',
-                    'things to do'
+                    'things to do', 
+                    {
+                        'command': voiceCommands.toDo.listToDos
+                    }
                 ], 
                 "add": [
                     'add to my to dos',
-                    'add to do'
+                    'add to do',
+                    'at to do',
+                    {
+                        'command': voiceCommands.toDo.addToDos
+                    }
                 ], 
                 "done": [
                     'mark as done',
                     'remove to do', 
-                    'done to do '
+                    'done to do ',
+                    {
+                        'command': voiceCommands.toDo.remove
+                    }
+                ], 
+                "removeAll": [
+                    'remove all', 
+                    'remove all to dos',
+                    'remove all to do', 
+                    'mark all to do as done', 
+                    'done all to dos', 
+                    'remove all to do', 
+                    'remove all two doors', 
+                    'done all to do', 
+                    'dun all to dos', 
+                    'done all', 
+                    'dun all',
+                    'remove all tuduz',
+                    'remove all todos',
+                    {
+                        'command': voiceCommands.toDo.removeAll
+                    }
                 ]
             }
 
+            for command in todoCommands: 
+                try: 
+                    for cmd in todoCommands[command]: 
+                        if cmd in self.fullcmd:
+                            try: 
+                                task = utilities.greaterOf(self.task.split('cmd')[0], self.task.split('cmd')[1])
+                                todoCommands[command][-1]['command'](task)  
+                            except IndexError: 
+                                task = self.task.split('cmd')[0]
+                                todoCommands[command][-1]['command'](task)     
+                except TypeError: 
+                    pass 
+
+
+
     class dictionary: 
 
-        def __init__(self, word): 
+        # use the scalper thing I made in the dictionaryAPI.py
+        # and use its function to get the meaning of the word
+        # requested by it's masters ^ \\\ ^
+
+        def __init__(self, word, fullcmd): 
             print(f'searching for the meaning of {word}')
             self.word = word
             self.meaning = dictAPI.getMeaning(word)
@@ -61,18 +193,25 @@ class voiceCommands:
 
     class youtubeSearch:
 
-        def __init__(self, keyword):
+        # search ze zutube for content 
+        # then play the content B)
+
+        def __init__(self, keyword, fullcmd):
             self.keyword = keyword
             try:
                 results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
-                print(results.result()['search_result'][0]['link'])
+                driver = webdriver.Chrome()
+                driver.get(results.result()['search_result'][0]['link'])
             except Exception as e:
                 print(e)
             
 
     class searchWeb: 
 
-        def __init__(self, keyword):
+        # use the doge, sorry duckduckgo API to 
+        # get the top result and speak that 
+
+        def __init__(self, keyword, fullcmd):
             self.keyword = keyword  
             print(f"searching for {keyword}")
             try:
@@ -81,9 +220,53 @@ class voiceCommands:
             except IndexError: 
                 pass
 
+    class googleCast:
+
+        def __init__(self, device, fullcmd):
+            print('Reached atleast here....')
+            self.connection = False
+            self.device = device
+            if self.connection == False:
+                self.connect()
+
+        def connect(self):
+            try:
+                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[f'{self.device}'.title()])
+                print('reached here')
+                if self.chromecasts:
+                    utilites.SpeakText('Connection succeeded!')
+                    self.connection = True
+            except Exception as e:
+                utilities.SpeakText(f'{e}')
+
+        def concheck(self):
+            while True:
+                if self.chromecasts:
+                    continue
+                else:
+                    utilites.SpeakText('Connection Broke!')
+                    self.connection = False
+                    return
+
+        class mediaControls:
+            pass
+
+    class youtubeSearch:
+
+        def __init__(self, keyword):
+            print('reached here')
+            self.keyword = keyword
+            try:
+                results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
+                print(results.result()['search_result'][0]['link'])
+            except Exception as e:
+                print(e)
+
     class urban: 
 
-        def __init__(self, word): 
+        # urban dictionary OwO
+
+        def __init__(self, word, fullcmd): 
             print(f"searching for {word}")
             self.word = word
             try:
@@ -119,8 +302,7 @@ class naturalLanguage:
         ], 
         'web': [
             'search the web for',
-            'search the web', 
-            'search ',
+            'search the web',
             {
                 'command': voiceCommands.searchWeb
             }
@@ -133,19 +315,30 @@ class naturalLanguage:
         ],
         'toDo': [
             'to do',
-            'to dos', 
+            'to dos',
+            'todo', 
+            'todos',
             {
                 'command': voiceCommands.toDo
             }
-        ],
+        ],        
         'youtube':[
             'search youtube for',
+            'search on youtube for',
             'search youtube',
             'search yt',
             {
                 'command': voiceCommands.youtubeSearch
             }
-        ]       
+        ],
+        'connect':[
+            'connect to',
+            'cast',
+            'cast to',
+            {
+                'command': voiceCommands.googleCast
+            }
+        ]    
     }
 
 
@@ -158,12 +351,12 @@ class naturalLanguage:
                 for cmd in self.__class__.commands[command]: 
                     if cmd in self.command and trigger in self.command:
                         try: 
-                            self.command = self.command.split(trigger)[1]
-                            argument = utilities.greaterOf(self.command.split(cmd)[0], self.command.split(cmd)[1])
+                            self.command = self.command.split(trigger, 1)[1]
+                            argument = utilities.greaterOf(self.command.split(cmd, 1)[0], self.command.split(cmd, 1)[1])
                         except IndexError: 
-                            argument = self.command.split(command)[0] 
+                            argument = self.command.split(command, 1)[0] 
                         finally: 
-                            self.__class__.commands[command][-1]['command'](argument)       
+                            self.__class__.commands[command][-1]['command'](argument, self.command)       
             except TypeError: 
                 pass
   
@@ -189,15 +382,21 @@ class utilities:
             else: 
                 return arg2
 
+    # speak text that has been passed :) 
+    
     @staticmethod
     def SpeakText(command):       
         engine.say(command)  
         engine.runAndWait() 
 
+    # write stuff to json, what else did you think this would do LMAO
+
     @staticmethod
     def writeToJson(data, file = "settings.json"): 
         with open(file, 'a+') as f: 
             json.dump(data, f)
+
+    # reset settings
 
     @staticmethod
     def runConfigurator():
@@ -228,6 +427,7 @@ if __name__ == "__main__":
     # :sweatsmile: 
     recognizer = Recognizer.Recognizer()  
     engine = pyttsx3.init() 
+    engine.setProperty('rate', 140)
     
     def main():
 
@@ -257,8 +457,7 @@ if __name__ == "__main__":
         if voiceGender == "m":                
             engine.setProperty('voice', voices[0].id)
         elif voiceGender == "f": 
-            engine.setProperty('voice', voices[1].id)   
-        engine.setProperty('rate', 140)
+            engine.setProperty('voice', voices[1].id)         
     
 
         while True: 
