@@ -13,6 +13,8 @@ import urbandictionary as ud
 from youtubesearchpython import SearchVideos
 from selenium import webdriver
 
+from selenium import webdriver
+
 # homies
 import dictionaryAPI as dictAPI
 
@@ -219,6 +221,48 @@ class voiceCommands:
             except IndexError: 
                 pass
 
+    class googleCast:
+
+        def __init__(self, device, fullcmd):
+            print('Reached atleast here....')
+            self.connection = False
+            self.device = device
+            if self.connection == False:
+                self.connect()
+
+        def connect(self):
+            try:
+                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[f'{self.device}'.title()])
+                print('reached here')
+                if self.chromecasts:
+                    utilites.SpeakText('Connection succeeded!')
+                    self.connection = True
+            except Exception as e:
+                utilities.SpeakText(f'{e}')
+
+        def concheck(self):
+            while True:
+                if self.chromecasts:
+                    continue
+                else:
+                    utilites.SpeakText('Connection Broke!')
+                    self.connection = False
+                    return
+
+        class mediaControls:
+            pass
+
+    class youtubeSearch:
+
+        def __init__(self, keyword):
+            print('reached here')
+            self.keyword = keyword
+            try:
+                results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
+                print(results.result()['search_result'][0]['link'])
+            except Exception as e:
+                print(e)
+
     class urban: 
 
         # urban dictionary OwO
@@ -278,15 +322,24 @@ class naturalLanguage:
             {
                 'command': voiceCommands.toDo
             }
-        ],
+        ],        
         'youtube':[
             'search youtube for',
+            'search on youtube for',
             'search youtube',
             'search yt',
             {
                 'command': voiceCommands.youtubeSearch
             }
-        ]       
+        ],
+        'connect':[
+            'connect to',
+            'cast',
+            'cast to',
+            {
+                'command': voiceCommands.googleCast
+            }
+        ]    
     }
 
 
