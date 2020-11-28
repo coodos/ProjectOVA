@@ -1,6 +1,7 @@
 # builtins
 import json
 import os
+import sys
 
 # outcasts
 import bs4
@@ -24,7 +25,27 @@ class voiceCommands:
 
         def __init__(self, task):
             self.task = task
-            print(task)
+            self.processTodo()
+
+        def processTodo(): 
+            todoCommands = {
+                "list": [
+                    'what are my to dos',
+                    'what are the things to do', 
+                    'show my to dos', 
+                    'list my to dos',
+                    'things to do'
+                ], 
+                "add": [
+                    'add to my to dos',
+                    'add to do'
+                ], 
+                "done": [
+                    'mark as done',
+                    'remove to do', 
+                    'done to do '
+                ]
+            }
 
     class dictionary: 
 
@@ -42,6 +63,7 @@ class voiceCommands:
 
         def __init__(self, keyword):
             self.keyword = keyword  
+            print(f"searching for {keyword}")
             try:
                 response = doge.query(keyword)
                 utilities.SpeakText(f'top result on internet says that, {response.related_topics[0].text}')
@@ -117,6 +139,7 @@ class naturalLanguage:
                 for cmd in self.__class__.commands[command]: 
                     if cmd in self.command and trigger in self.command:
                         try: 
+                            self.command = self.command.split(trigger)[1]
                             argument = utilities.greaterOf(self.command.split(cmd)[0], self.command.split(cmd)[1])
                         except IndexError: 
                             argument = self.command.split(command)[0] 
@@ -168,6 +191,9 @@ class utilities:
         print("\n==============================================================\n")
         device_id = input("enter device id of the microphone you would like to use\n--> ")
         settings["micID"] = device_id
+        print("\n==============================================================\n")
+        gender = input('What gender would you like your assistant to sound like?\n[ m ] Male\n[ f ] Female\n\n--> ')
+        settings["gender"] = gender
         utilities.writeToJson(settings)       
 
 
@@ -178,21 +204,39 @@ if __name__ == "__main__":
     # code totally not stolen from GeeksForGeeks
     # :sweatsmile: 
     
-    recognizer = Recognizer.Recognizer()  
-    engine = pyttsx3.init() 
-    # setting a female voice 
-    voices = engine.getProperty('voices')      
-    engine.setProperty('voice', voices[1].id)   
-    engine.setProperty('rate', 140)
-
     def main():
 
         # read the config which has already been defined 
         # and use bloody use that LOL
-        with open('settings.json', 'r') as settingsFile: 
-            settings = json.load(settingsFile)
-            triggerWord = settings["trigger"]
-            micId = int(settings["micID"])
+        try: 
+            with open('settings.json', 'r') as settingsFile: 
+                settings = json.load(settingsFile)
+                triggerWord = settings["trigger"]
+                micId = int(settings["micID"])
+                voiceGender = settings['gender']
+        except KeyError: 
+            print("your local configuration appears to have been corrupted")
+            print("Press [y] to continue with resseting your voice assistant or [n] to cancel")
+            inp = input("--> ")
+            if inp.lower().strip() == "y": 
+                utilities.runConfigurator()
+            elif inp.lower().strip() == "n":
+                sys.exit()
+            else: 
+                print("ALERT : invalid input\n")
+                main()
+
+
+        recognizer = Recognizer.Recognizer()  
+        engine = pyttsx3.init() 
+        # setting a female voice 
+        voices = engine.getProperty('voices')   
+        if voiceGender == "m":                
+            engine.setProperty('voice', voices[0].id)
+        elif voiceGender == "f": 
+            engine.setProperty('voice', voices[1].id)   
+        engine.setProperty('rate', 140)
+    
 
         while True: 
             
