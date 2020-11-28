@@ -23,13 +23,23 @@ import dictionaryAPI as dictAPI
 
 class voiceCommands: 
 
+    # this class is for the sole purpose of todos 
+    # probably the largest subclass yet * G U L P S * 
+
     class toDo: 
+
+        # initialise a todos object and process 
+        # the voice command that voice provided 
+        # by it's masters
 
         def __init__(self, task, fullcmd):
             print(f"todo {task}")
             self.task = task
             self.fullcmd = fullcmd
             self.processTodo()
+
+        # scan the todos.json file and see that 
+        # what on earth are the person's to dos 
 
         @staticmethod
         def listToDos(lst = ''): 
@@ -45,6 +55,11 @@ class voiceCommands:
             except json.decoder.JSONDecodeError:
                 utilities.SpeakText("it seems that you don't have anything to do! enjoy your day!")    
     
+        # listen to the to dos on voice 
+        # and then add the to dos to the 
+        # todos.json file and if it doesn't 
+        # exist then heck create one smh
+
         @staticmethod
         def addToDos(task): 
             try: 
@@ -67,7 +82,8 @@ class voiceCommands:
             finally: 
                 utilities.SpeakText(f"Added the to do, {task}")
 
-                
+        # remove the lonely todo that has been used 
+        # poor lil to do was emotionally tortured :(
         
         @staticmethod
         def remove(task):
@@ -82,6 +98,8 @@ class voiceCommands:
                 print(e) 
                 utilities.SpeakText("I can't seem to find that task")
 
+        # perform a mass genocide of todos OwO
+
         @staticmethod
         def removeAll(lst):
             try: 
@@ -90,6 +108,8 @@ class voiceCommands:
                 utilities.SpeakText("You don't seem to have any thing to do ")
             finally: 
                 utilities.SpeakText("Removed all todos")
+
+        # the dreaded SCUFFED NLP UwU
 
         def processTodo(self):             
 
@@ -157,6 +177,10 @@ class voiceCommands:
 
     class dictionary: 
 
+        # use the scalper thing I made in the dictionaryAPI.py
+        # and use its function to get the meaning of the word
+        # requested by it's masters ^ \\\ ^
+
         def __init__(self, word, fullcmd): 
             print(f'searching for the meaning of {word}')
             self.word = word
@@ -167,6 +191,9 @@ class voiceCommands:
                 utilities.SpeakText("hmmmmmmmmmm, I don't know that word")
 
     class youtubeSearch:
+
+        # search ze zutube for content 
+        # then play the content B)
 
         def __init__(self, keyword, fullcmd):
             self.keyword = keyword
@@ -180,6 +207,9 @@ class voiceCommands:
 
     class searchWeb: 
 
+        # use the doge, sorry duckduckgo API to 
+        # get the top result and speak that 
+
         def __init__(self, keyword, fullcmd):
             self.keyword = keyword  
             print(f"searching for {keyword}")
@@ -190,6 +220,8 @@ class voiceCommands:
                 pass
 
     class urban: 
+
+        # urban dictionary OwO
 
         def __init__(self, word, fullcmd): 
             print(f"searching for {word}")
@@ -298,15 +330,21 @@ class utilities:
             else: 
                 return arg2
 
+    # speak text that has been passed :) 
+    
     @staticmethod
     def SpeakText(command):       
         engine.say(command)  
         engine.runAndWait() 
 
+    # write stuff to json, what else did you think this would do LMAO
+
     @staticmethod
     def writeToJson(data, file = "settings.json"): 
         with open(file, 'a+') as f: 
             json.dump(data, f)
+
+    # reset settings
 
     @staticmethod
     def runConfigurator():
