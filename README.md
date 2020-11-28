@@ -16,6 +16,10 @@
 
 6. **Custom Name** : ever felt like the names "Cortana", "siri" or "alexa" are boring, well with our assistant you can call it whatever you want to call it!
 
+7. **Chromecast** : Play youtube video on your chromecast :D
+
+8. **WinApps** : so this one was a pain cuz *there was no library that worked smh* I had to make it myself. To run any app on windows just ask your voice assistant to run it.
+
 > ## How to run locally
 
 1. git clone this repo 
