@@ -15,11 +15,13 @@ import speech_recognition as Recognizer
 import urbandictionary as ud
 from youtubesearchpython import SearchVideos
 import pychromecast
+from pychromecast.controllers.youtube import YouTubeController
 
 # homies
 import dictionaryAPI as dictAPI
 from winApps import winapps
 import chromecastchecker as ccc
+from lowerUtils import lowerUtils as lU 
 from newsApi import news as newsApi
 
 # One Class to rule em all
@@ -270,18 +272,14 @@ class voiceCommands:
         def __init__(self, device, fullcmd):
             print('Reached atleast here....')
             self.connection = False
-            self.device = device
-            if self.connection == False:
-                self.connect()
             self.processCmd(fullcmd)
 
         def connect(self):
             try:
-                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=["Den TV"])
+                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[self.device])
                 print('reached here')
-                if self.chromecasts:
-                    utilities.SpeakText('Connection succeeded!')
-                    self.connection = True
+                utilities.SpeakText('Connection succeeded!')
+                self.connection = True
             except Exception as e:
                 utilities.SpeakText(f'{e}')
 
@@ -297,21 +295,46 @@ class voiceCommands:
         def processCmd(self, fullcmd):
             cmd = fullcmd.split('cast')
             cmdlets = ['to my device', 'on the device', 'on device', 'to device']
+            print('reached to processing')
             for cmdlet in cmdlets:
+                print(cmdlet, cmd)
+                cmd = sorted(cmd)[-1]
                 if cmdlet in cmd:
                     deviceName = cmd.split(cmdlet)[1]
-                    url = self.searchVid(cmd.split(cmdlet)[0])
+                    self.cccComparator(deviceName)
+                    url = self.searchVid(cmd.split(cmdlet)[0])    
+                    if self.connection == False:
+                        self.connect() 
 
+                    vidId = url.split("?v=")[-1].split("&")[0]
+                    self.playContent(vidId)           
+            
 
+        def playContent(self, videoID):
+            print("video shud play but won't :(")
+            cast = self.chromecasts[0]
+            cast.wait()
+            yt = YouTubeController()
+            cast.register_handler(yt)
+            yt.play_video(videoID)
 
         def searchVid(self, keyword):
             results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
             url = results.result()['search_result'][0]['link']
-            return url
-            
+            return url        
 
-    class mediaControls:
-        pass
+    
+        def cccComparator(self, device):
+            with open('cache/chromecast.txt', 'r+') as f:
+                shit = f.readlines()
+                newshit=[]
+                for element in shit:
+                    newelement = element[0:-1]
+                    newshit.append(newelement)
+                f.close()
+            print(newshit)
+            self.device = (lU.fuzzyCompare(device, newshit))
+
 
     class urban: 
 
