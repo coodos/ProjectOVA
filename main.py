@@ -11,7 +11,7 @@ import requests
 import speech_recognition as Recognizer
 import urbandictionary as ud
 from youtubesearchpython import SearchVideos
-from selenium import webdriver
+import webbrowser
 
 # homies
 import dictionaryAPI as dictAPI
@@ -199,8 +199,7 @@ class voiceCommands:
             self.keyword = keyword
             try:
                 results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
-                driver = webdriver.Chrome()
-                driver.get(results.result()['search_result'][0]['link'])
+                webbrowser.open(results.result()['search_result'][0]['link'], autoraise=True)
             except Exception as e:
                 print(e)
             
