@@ -11,8 +11,6 @@ import requests
 import speech_recognition as Recognizer
 import urbandictionary as ud
 from youtubesearchpython import SearchVideos
-import webbrowser
-
 from selenium import webdriver
 
 # homies
@@ -201,7 +199,18 @@ class voiceCommands:
             self.keyword = keyword
             try:
                 results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
-                webbrowser.open(results.result()['search_result'][0]['link'], autoraise=True)
+                # driver = webdriver.Chrome()
+                # driver.get(results.result()['search_result'][0]['link'])
+                url = results.result()['search_result'][0]['link']
+                if sys.platform=='win32':
+                    os.startfile(url)
+                elif sys.platform=='darwin':
+                    subprocess.Popen(['open', url])
+                else:
+                    try: 
+                        subprocess.Popen(['xdg-open', url])
+                    except OSError:
+                        utilities.SpeakText("You ran into browser issue")
             except Exception as e:
                 print(e)
             
@@ -248,23 +257,12 @@ class voiceCommands:
                     self.connection = False
                     return
 
-        class mediaControls:
-            pass
-
-    class youtubeSearch:
-
-        def __init__(self, keyword):
-            print('reached here')
-            self.keyword = keyword
-            try:
-                results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
-                print(results.result()['search_result'][0]['link'])
-            except Exception as e:
-                print(e)
+    class mediaControls:
+        pass
 
     class urban: 
 
-        # urban dictionary OwO
+            # urban dictionary OwO
 
         def __init__(self, word, fullcmd): 
             print(f"searching for {word}")
