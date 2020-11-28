@@ -5,12 +5,13 @@ import sys
 
 # outcasts
 import bs4
-import duckduckpy as doge
+import duckduckpy as doge # for ze MayMays B)
 import pyttsx3
 import requests
 import speech_recognition as Recognizer
 import urbandictionary as ud
 from youtubesearchpython import SearchVideos
+from selenium import webdriver
 
 # homies
 import dictionaryAPI as dictAPI
@@ -24,26 +25,73 @@ class voiceCommands:
 
     class toDo: 
 
-        def __init__(self, task):
+        def __init__(self, task, fullcmd):
             print(f"todo {task}")
             self.task = task
+            self.fullcmd = fullcmd
             self.processTodo()
 
         @staticmethod
-        def listToDos(): 
+        def listToDos(lst = ''): 
             print("listing")
+
+            try: 
+                with open("todos.json", 'a+') as jsonFile: 
+                    jsonFile.seek(0)
+                    utilities.SpeakText("you have the to dos. ")
+                    for todo in json.load(jsonFile)['todos']: 
+                        utilities.SpeakText(todo) 
+
+            except json.decoder.JSONDecodeError:
+                utilities.SpeakText("it seems that you don't have anything to do! enjoy your day!")    
+    
+        @staticmethod
+        def addToDos(task): 
+            try: 
+                with open('todos.json', 'r') as jsonFile: 
+                    out = {}
+                    todos = json.load(jsonFile)["todos"]
+                    todos.append(task.strip())
+                    out["todos"] = todos
+                os.remove("todos.json")
+                utilities.writeToJson(out, "todos.json")
+            except Exception as e:
+                print(e) 
+                try: 
+                    os.remove("todos.json")
+                except Exception:
+                    pass
+                todos = {"todos" : []}
+                todos["todos"].append(task.strip())
+                utilities.writeToJson(todos, "todos.json")
+            finally: 
+                utilities.SpeakText(f"Added the to do, {task}")
+
+                
         
         @staticmethod
-        def addToDos(): 
-            print("adding")
-        
+        def remove(task):
+            with open("todos.json", 'r') as jsonFile:
+                data = json.load(jsonFile)
+            try: 
+                data["todos"].pop(data["todos"].index(task.strip()))
+                os.remove("todos.json")
+                utilities.writeToJson(data, 'todos.json')
+                utilities.SpeakText(f"Removed to do, {task}")
+            except Exception as e:
+                print(e) 
+                utilities.SpeakText("I can't seem to find that task")
+
         @staticmethod
-        def remove():
-            print("removing")
+        def removeAll(lst):
+            try: 
+                os.remove("todos.json")
+            except FileNotFoundError: 
+                utilities.SpeakText("You don't seem to have any thing to do ")
+            finally: 
+                utilities.SpeakText("Removed all todos")
 
         def processTodo(self):             
-
-            print('processinngngnng...')
 
             todoCommands = {
                 "list": [
@@ -59,6 +107,7 @@ class voiceCommands:
                 "add": [
                     'add to my to dos',
                     'add to do',
+                    'at to do',
                     {
                         'command': voiceCommands.toDo.addToDos
                     }
@@ -70,15 +119,37 @@ class voiceCommands:
                     {
                         'command': voiceCommands.toDo.remove
                     }
+                ], 
+                "removeAll": [
+                    'remove all', 
+                    'remove all to dos',
+                    'remove all to do', 
+                    'mark all to do as done', 
+                    'done all to dos', 
+                    'remove all to do', 
+                    'remove all two doors', 
+                    'done all to do', 
+                    'dun all to dos', 
+                    'done all', 
+                    'dun all',
+                    'remove all tuduz',
+                    'remove all todos',
+                    {
+                        'command': voiceCommands.toDo.removeAll
+                    }
                 ]
             }
 
             for command in todoCommands: 
                 try: 
                     for cmd in todoCommands[command]: 
-                        print(cmd, todoCommands[command])
-                        if cmd in self.task:
-                            print(self.task)
+                        if cmd in self.fullcmd:
+                            try: 
+                                task = utilities.greaterOf(self.task.split('cmd')[0], self.task.split('cmd')[1])
+                                todoCommands[command][-1]['command'](task)  
+                            except IndexError: 
+                                task = self.task.split('cmd')[0]
+                                todoCommands[command][-1]['command'](task)     
                 except TypeError: 
                     pass 
 
@@ -86,7 +157,7 @@ class voiceCommands:
 
     class dictionary: 
 
-        def __init__(self, word): 
+        def __init__(self, word, fullcmd): 
             print(f'searching for the meaning of {word}')
             self.word = word
             self.meaning = dictAPI.getMeaning(word)
@@ -97,18 +168,19 @@ class voiceCommands:
 
     class youtubeSearch:
 
-        def __init__(self, keyword):
+        def __init__(self, keyword, fullcmd):
             self.keyword = keyword
             try:
                 results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
-                print(results.result()['search_result'][0]['link'])
+                driver = webdriver.Chrome()
+                driver.get(results.result()['search_result'][0]['link'])
             except Exception as e:
                 print(e)
             
 
     class searchWeb: 
 
-        def __init__(self, keyword):
+        def __init__(self, keyword, fullcmd):
             self.keyword = keyword  
             print(f"searching for {keyword}")
             try:
@@ -119,7 +191,7 @@ class voiceCommands:
 
     class urban: 
 
-        def __init__(self, word): 
+        def __init__(self, word, fullcmd): 
             print(f"searching for {word}")
             self.word = word
             try:
@@ -155,8 +227,7 @@ class naturalLanguage:
         ], 
         'web': [
             'search the web for',
-            'search the web', 
-            'search ',
+            'search the web',
             {
                 'command': voiceCommands.searchWeb
             }
@@ -169,7 +240,9 @@ class naturalLanguage:
         ],
         'toDo': [
             'to do',
-            'to dos', 
+            'to dos',
+            'todo', 
+            'todos',
             {
                 'command': voiceCommands.toDo
             }
@@ -194,12 +267,12 @@ class naturalLanguage:
                 for cmd in self.__class__.commands[command]: 
                     if cmd in self.command and trigger in self.command:
                         try: 
-                            self.command = self.command.split(trigger)[1]
-                            argument = utilities.greaterOf(self.command.split(cmd)[0], self.command.split(cmd)[1])
+                            self.command = self.command.split(trigger, 1)[1]
+                            argument = utilities.greaterOf(self.command.split(cmd, 1)[0], self.command.split(cmd, 1)[1])
                         except IndexError: 
-                            argument = self.command.split(command)[0] 
+                            argument = self.command.split(command, 1)[0] 
                         finally: 
-                            self.__class__.commands[command][-1]['command'](argument)       
+                            self.__class__.commands[command][-1]['command'](argument, self.command)       
             except TypeError: 
                 pass
   
@@ -264,6 +337,7 @@ if __name__ == "__main__":
     # :sweatsmile: 
     recognizer = Recognizer.Recognizer()  
     engine = pyttsx3.init() 
+    engine.setProperty('rate', 140)
     
     def main():
 
@@ -293,8 +367,7 @@ if __name__ == "__main__":
         if voiceGender == "m":                
             engine.setProperty('voice', voices[0].id)
         elif voiceGender == "f": 
-            engine.setProperty('voice', voices[1].id)   
-        engine.setProperty('rate', 140)
+            engine.setProperty('voice', voices[1].id)         
     
 
         while True: 
