@@ -24,28 +24,64 @@ class voiceCommands:
     class toDo: 
 
         def __init__(self, task):
+            print(f"todo {task}")
             self.task = task
             self.processTodo()
 
-        def processTodo(): 
+        @staticmethod
+        def listToDos(): 
+            print("listing")
+        
+        @staticmethod
+        def addToDos(): 
+            print("adding")
+        
+        @staticmethod
+        def remove():
+            print("removing")
+
+        def processTodo(self):             
+
+            print('processinngngnng...')
+
             todoCommands = {
                 "list": [
                     'what are my to dos',
                     'what are the things to do', 
                     'show my to dos', 
                     'list my to dos',
-                    'things to do'
+                    'things to do', 
+                    {
+                        'command': voiceCommands.toDo.listToDos
+                    }
                 ], 
                 "add": [
                     'add to my to dos',
-                    'add to do'
+                    'add to do',
+                    {
+                        'command': voiceCommands.toDo.addToDos
+                    }
                 ], 
                 "done": [
                     'mark as done',
                     'remove to do', 
-                    'done to do '
+                    'done to do ',
+                    {
+                        'command': voiceCommands.toDo.remove
+                    }
                 ]
             }
+
+            for command in todoCommands: 
+                try: 
+                    for cmd in todoCommands[command]: 
+                        print(cmd, todoCommands[command])
+                        if cmd in self.task:
+                            print(self.task)
+                except TypeError: 
+                    pass 
+
+
 
     class dictionary: 
 
