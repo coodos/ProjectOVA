@@ -12,11 +12,12 @@ import requests
 import speech_recognition as Recognizer
 import urbandictionary as ud
 from youtubesearchpython import SearchVideos
-from selenium import webdriver
+import pychromecast
 
 # homies
 import dictionaryAPI as dictAPI
 from winApps import winapps
+import chromecastchecker as ccc
 
 # One Class to rule em all
 # One Class to find them 
@@ -218,6 +219,7 @@ class voiceCommands:
             self.keyword = keyword
             try:
                 results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
+
                 # driver = webdriver.Chrome()
                 # driver.get(results.result()['search_result'][0]['link'])
                 url = results.result()['search_result'][0]['link']
@@ -259,10 +261,10 @@ class voiceCommands:
 
         def connect(self):
             try:
-                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[f'{self.device}'.title()])
+                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=["Den TV"])
                 print('reached here')
                 if self.chromecasts:
-                    utilites.SpeakText('Connection succeeded!')
+                    utilities.SpeakText('Connection succeeded!')
                     self.connection = True
             except Exception as e:
                 utilities.SpeakText(f'{e}')
@@ -272,7 +274,7 @@ class voiceCommands:
                 if self.chromecasts:
                     continue
                 else:
-                    utilites.SpeakText('Connection Broke!')
+                    utilities.SpeakText('Connection Broke!')
                     self.connection = False
                     return
 
@@ -390,6 +392,12 @@ class naturalLanguage:
 
 class utilities: 
 
+    @staticmethod
+    def startSlaves():
+        chromecastchecker = threading.Thread(target=ccc.check, args=())
+        chromecastchecker.daemon = True
+        chromecastchecker.start()
+
     # this static method is for checking
     # which of the two arguments is greater
 
@@ -455,6 +463,8 @@ if __name__ == "__main__":
     engine.setProperty('rate', 140)
     
     def main():
+
+        utilities.startSlaves()
 
         # read the config which has already been defined 
         # and use bloody use that LOL
