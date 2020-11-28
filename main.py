@@ -10,6 +10,7 @@ import pyttsx3
 import requests
 import speech_recognition as Recognizer
 import urbandictionary as ud
+from youtubesearchpython import SearchVideos
 
 # homies
 import dictionaryAPI as dictAPI
@@ -93,6 +94,16 @@ class voiceCommands:
                 utilities.SpeakText(f'the meaning of {self.word} is, {self.meaning}')
             else: 
                 utilities.SpeakText("hmmmmmmmmmm, I don't know that word")
+
+    class youtubeSearch:
+
+        def __init__(self, keyword):
+            self.keyword = keyword
+            try:
+                results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
+                print(results.result()['search_result'][0]['link'])
+            except Exception as e:
+                print(e)
             
 
     class searchWeb: 
@@ -162,7 +173,15 @@ class naturalLanguage:
             {
                 'command': voiceCommands.toDo
             }
-        ]        
+        ],
+        'youtube':[
+            'search youtube for',
+            'search youtube',
+            'search yt',
+            {
+                'command': voiceCommands.youtubeSearch
+            }
+        ]       
     }
 
 
