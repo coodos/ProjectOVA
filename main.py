@@ -24,6 +24,7 @@ class voiceCommands:
 
         def __init__(self, task):
             self.task = task
+            print(task)
 
     class dictionary: 
 
@@ -98,7 +99,8 @@ class naturalLanguage:
             } 
         ],
         'toDo': [
-            'to do', 
+            'to do',
+            'to dos', 
             {
                 'command': voiceCommands.toDo
             }
