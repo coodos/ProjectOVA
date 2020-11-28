@@ -2,7 +2,7 @@
 
 > So this is basically an amazing voice assistant that doesn't steal your data like zucky boi, billy G or sun bath 
 
-### What are the features that work till now?
+> ## What are the features that work till now?
 
 1. **To Dos** : You can manage to dos by adding them, removing them or asking for the things to do, you have options to remove all or remove one.
 
@@ -16,7 +16,7 @@
 
 6. **Custom Name** : ever felt like the names "Cortana", "siri" or "alexa" are boring, well with our assistant you can call it whatever you want to call it!
 
-### How to run locally
+> ## How to run locally
 
 1. git clone this repo 
 
