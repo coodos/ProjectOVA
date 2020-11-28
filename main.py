@@ -155,6 +155,20 @@ class utilities:
         with open(file, 'a+') as f: 
             json.dump(data, f)
 
+    @staticmethod
+    def runConfigurator():
+        settings = {}
+        triggerWord = input("what would you like your personal assistant to be called ?\n--> ")
+        settings['trigger'] = triggerWord    
+        print("\n==============================================================\n")
+        for index, name in enumerate(Recognizer.Microphone.list_microphone_names()):
+            print(f" [ devide id : {index} ] {name} ")
+        print("\n==============================================================\n")
+        device_id = input("enter device id of the microphone you would like to use\n--> ")
+        settings["micID"] = device_id
+        utilities.writeToJson(settings)       
+
+
 
 if __name__ == "__main__":
 
@@ -170,15 +184,20 @@ if __name__ == "__main__":
     engine.setProperty('rate', 140)
 
     def main():
-        while True: 
 
-            with open('settings.json', 'r') as settingsFile: 
-                settings = json.load(settingsFile)
-                triggerWord = settings["trigger"]
+        # read the config which has already been defined 
+        # and use bloody use that LOL
+        with open('settings.json', 'r') as settingsFile: 
+            settings = json.load(settingsFile)
+            triggerWord = settings["trigger"]
+            micId = int(settings["micID"])
+
+        while True: 
+            
             try: 
                 # { mic ---> google api ---> text } ==> STONKS        
                 # ^ /// ^      
-                with Recognizer.Microphone(device_index=4) as source: 
+                with Recognizer.Microphone(device_index=micId) as source: 
                     recognizer.adjust_for_ambient_noise(source, duration=0.1)  
                     audio = recognizer.listen(source) 
                     MyText = recognizer.recognize_google(audio) 
@@ -200,8 +219,5 @@ if __name__ == "__main__":
         main()       
     
     else: 
-        settings = {}
-        triggerWord = input("what would you like your personal assistant to be called ?\n--> ")
-        settings['trigger'] = triggerWord
-        utilities.writeToJson(settings)       
+        utilities.runConfigurator()
         main()
