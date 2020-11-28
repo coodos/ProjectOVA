@@ -10,9 +10,9 @@
 
 3. **Meaning** : You can ask your assistant to define any word you would like.
 
-4. **Urban Dictionary** : If you are feeling fancy you can also ask for the meaning of a word via urban dictionary. simply say "urban dictionary `<word>`"
+4. **Urban Dictionary** : If you are feeling fancy you can also ask for the meaning of a word via urban dictionary. simply say "urban dictionary < word > "
 
-5. **Youtube Search** : Let's say you want to watch a video on youtube but you dont feel like opening a browser and opening a video, simply say, "search on youtube for `<video name>` and it would open the top result on a chrome window for you.
+5. **Youtube Search** : Let's say you want to watch a video on youtube but you dont feel like opening a browser and opening a video, simply say, "search on youtube for < video name > and it would open the top result on a chrome window for you.
 
 6. **Custom Name** : ever felt like the names "Cortana", "siri" or "alexa" are boring, well with our assistant you can call it whatever you want to call it!
 
