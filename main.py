@@ -5,7 +5,6 @@ import sys
 import subprocess
 import threading
 import difflib
-
 # outcasts
 import bs4
 import duckduckpy as doge # for ze MayMays B)
@@ -20,6 +19,7 @@ import pychromecast
 import dictionaryAPI as dictAPI
 from winApps import winapps
 import chromecastchecker as ccc
+from lowerUtils import lowerUtils as lU 
 from newsApi import news as newsApi
 
 # One Class to rule em all
@@ -270,13 +270,13 @@ class voiceCommands:
         def __init__(self, device, fullcmd):
             print('Reached atleast here....')
             self.connection = False
-            self.device = device
+            self.device = self.cccComparator(device)
             if self.connection == False:
                 self.connect()
 
         def connect(self):
             try:
-                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=["Den TV"])
+                self.chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[self.device])
                 print('reached here')
                 if self.chromecasts:
                     utilities.SpeakText('Connection succeeded!')
@@ -293,8 +293,19 @@ class voiceCommands:
                     self.connection = False
                     return
 
-    class mediaControls:
-        pass
+        def cccComparator(self, device):
+            with open('cache/chromecast.txt', 'r+') as f:
+                shit = f.readlines()
+                newshit=[]
+                for element in shit:
+                    newelement = element[0:-1]
+                    newshit.append(newelement)
+                f.close()
+            print(newshit)
+            self.device = (lU.fuzzyCompare(device, newshit))
+
+        class mediaControls:
+            pass
 
     class urban: 
 
