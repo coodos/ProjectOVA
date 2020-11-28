@@ -273,6 +273,7 @@ class voiceCommands:
             self.device = device
             if self.connection == False:
                 self.connect()
+            self.processCmd(fullcmd)
 
         def connect(self):
             try:
@@ -292,6 +293,22 @@ class voiceCommands:
                     utilities.SpeakText('Connection Broke!')
                     self.connection = False
                     return
+
+        def processCmd(self, fullcmd):
+            cmd = fullcmd.split('cast')
+            cmdlets = ['to my device', 'on the device', 'on device', 'to device']
+            for cmdlet in cmdlets:
+                if cmdlet in cmd:
+                    deviceName = cmd.split(cmdlet)[1]
+                    url = self.searchVid(cmd.split(cmdlet)[0])
+
+
+
+        def searchVid(self, keyword):
+            results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
+            url = results.result()['search_result'][0]['link']
+            return url
+            
 
     class mediaControls:
         pass
