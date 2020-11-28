@@ -3,6 +3,7 @@ import json
 import os
 import sys
 import threading
+import subprocess
 
 # outcasts
 import bs4
