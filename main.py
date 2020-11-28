@@ -2,6 +2,7 @@
 import json
 import os
 import sys
+import threading
 
 # outcasts
 import bs4
@@ -27,10 +28,18 @@ class voiceCommands:
     # this class deals with launching windows apps 
     # that are installed onto thy systeme 
 
-    class win: 
+    class win:
+
+        class launchThread: 
+
+            def __init__(self, app):
+                self.thread = threading.Thread(target=winapps.launch, args=(app, )) 
+                self.thread.daemon = True
+                self.thread.start()
 
         def __init__(self, app, fullcmd):
-            winapps.launch(winapps.searchForApp(app))
+            voiceCommands.win.launchThread(winapps.searchForApp(app))
+            
         
 
     # this class is for the sole purpose of todos 

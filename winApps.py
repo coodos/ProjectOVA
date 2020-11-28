@@ -35,7 +35,6 @@ class winapps:
             ratio = SequenceMatcher(None, appName, app).ratio()
                         
             if ratio > highesRatio:
-                print(ratio, app)
                 highesRatio = ratio
                 highest = app
 
