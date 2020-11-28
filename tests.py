@@ -1,13 +1,12 @@
-import pafy
-import vlc
 
-url = "https://www.youtube.com/watch?v=bMt47wvK6u0"
-video = pafy.new(url)
-best = video.getbest()
-playurl = best.url
-Instance = vlc.Instance()
-player = Instance.media_player_new()
-Media = Instance.media_new(playurl)
-Media.get_mrl()
-player.set_media(Media)
-player.play()
+# import modules 
+import winapps 
+  
+try: 
+# get each application with list_installed() 
+    for item in winapps.list_installed(): 
+        print(item)
+        break
+           
+except Exception: 
+    pass
