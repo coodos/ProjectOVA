@@ -1,6 +1,6 @@
 # OpenVoiceAssistant
 
-> So this is basically an amazing voice assistant that doesn't steal your data like zucky boi, billy G or sun bath 
+***So this is basically an amazing voice assistant that doesn't steal your data like zucky boi, billy G or sun bath*** 
 
 > ## What are the features that work till now?
 
