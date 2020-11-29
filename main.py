@@ -54,6 +54,7 @@ class voiceCommands:
 
         def __init__(self, date, fullcmd):
             print('reaching to ze end')
+            youtubeAudio.killAll()
             engine.stop()
             # engine.start()
 
