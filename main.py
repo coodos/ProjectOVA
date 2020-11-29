@@ -18,6 +18,7 @@ import pychromecast
 from pychromecast.controllers.youtube import YouTubeController
 
 # homies
+import datestuff as dateSig
 import dictionaryAPI as dictAPI
 from winApps import winapps
 import chromecastchecker as ccc
@@ -31,8 +32,19 @@ from newsApi import news as newsApi
 
 class voiceCommands: 
 
-    # this class deals with launching windows apps 
-    # that are installed onto thy systeme 
+    class sup: 
+
+        def __init__(self, date, fullcmd):
+            utilities.SpeakText(f'I am doing excellent! thanks for asking. {dateSig.dateSignificance.dateHolidays()}')
+
+    # gives historical sig of the day
+
+    class onThisDay:
+
+        def __init__(self, dateToday, fullcmd):
+            utilities.SpeakText(dateSig.dateSignificance.getImportantEventToday())
+
+    # get all the news 
 
     class news: 
 
@@ -41,6 +53,8 @@ class voiceCommands:
             print(newsApi.getNews())
             utilities.SpeakText(newsApi.getNews())
         
+    # this class deals with launching windows apps 
+    # that are installed onto thy systeme 
 
     class win:
 
@@ -237,8 +251,6 @@ class voiceCommands:
             try:
                 results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
 
-                # driver = webdriver.Chrome()
-                # driver.get(results.result()['search_result'][0]['link'])
                 url = results.result()['search_result'][0]['link']
                 if sys.platform=='win32':
                     os.startfile(url)
@@ -255,7 +267,7 @@ class voiceCommands:
 
     class searchWeb: 
 
-        # use the doge, sorry duckduckgo API to 
+        # use the doge, sorry duckduckpy API to 
         # get the top result and speak that 
 
         def __init__(self, keyword, fullcmd):
@@ -338,7 +350,7 @@ class voiceCommands:
 
     class urban: 
 
-            # urban dictionary OwO
+        # urban dictionary OwO
 
         def __init__(self, word, fullcmd): 
             print(f"searching for {word}")
@@ -431,7 +443,23 @@ class naturalLanguage:
             {
                 'command': voiceCommands.news
             }
-        ]    
+        ],
+        'dateSig': [
+            'on this day',
+            {
+                'command': voiceCommands.onThisDay
+            }
+        ],
+        'sup': [
+            'how are you',
+            'sup',
+            'wassup',
+            'what\'s up',
+            'what is up',
+            {
+                "command": voiceCommands.sup
+            }
+        ]
     }
 
 
@@ -553,7 +581,7 @@ if __name__ == "__main__":
                 print("ALERT : invalid input\n")
                 main()
         
-        # setting a female voice 
+        # setting voice gender
         voices = engine.getProperty('voices')   
         if voiceGender == "m":                
             engine.setProperty('voice', voices[0].id)
