@@ -24,6 +24,7 @@ from winApps import winapps
 import chromecastchecker as ccc
 from lowerUtils import lowerUtils as lU 
 from newsApi import news as newsApi
+from music import youtubeAudio
 
 # One Class to rule em all
 # One Class to find them 
@@ -31,6 +32,21 @@ from newsApi import news as newsApi
 # in the darkness and bind them 
 
 class voiceCommands:
+
+    # cless for ze myusike
+
+    class music: 
+
+        def __init__(self, song, fullcmd):
+            utilities.SpeakText("hold tight while I get you your spicy music")
+            self.vidUrl = self.searchVid(song)
+            print(self.vidUrl)
+            aud = youtubeAudio(self.vidUrl)
+
+        def searchVid(self, keyword):
+            results = SearchVideos(keyword, offset = 1, mode = "dict", max_results = 1)
+            url = results.result()['search_result'][0]['link']
+            return url
 
     # stop the voice assistant from saying anything more 
 
@@ -477,6 +493,17 @@ class naturalLanguage:
             'shut up', 
             {
                 "command": voiceCommands.stopVoice
+            }
+        ], 
+        'music': [
+            'play song', 
+            'play the song',
+            'play the track',
+            'play the music',
+            'play music',
+            'play track',
+            {
+                'command': voiceCommands.music
             }
         ]
     }
