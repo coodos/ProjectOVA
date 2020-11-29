@@ -30,7 +30,18 @@ from newsApi import news as newsApi
 # One Class to bring them all 
 # in the darkness and bind them 
 
-class voiceCommands: 
+class voiceCommands:
+
+    # stop the voice assistant from saying anything more 
+
+    class stopVoice:  
+
+        def __init__(self, date, fullcmd):
+            print('reaching to ze end')
+            engine.stop()
+            # engine.start()
+
+    # gets you info about the date
 
     class sup: 
 
@@ -459,6 +470,14 @@ class naturalLanguage:
             {
                 "command": voiceCommands.sup
             }
+        ],
+        'stop': [
+            'cut it out', 
+            'stop', 
+            'shut up', 
+            {
+                "command": voiceCommands.stopVoice
+            }
         ]
     }
 
@@ -486,6 +505,8 @@ class naturalLanguage:
 
 class utilities: 
 
+    threads = []
+
     @staticmethod
     def startSlaves():
         chromecastchecker = threading.Thread(target=ccc.check, args=())
@@ -511,10 +532,18 @@ class utilities:
 
     # speak text that has been passed :) 
     
+    @classmethod
+    def SpeakText(cls, command):
+        speechThread = threading.Thread(target=utilities.speech, args=(command, )) 
+        speechThread.daemon = True
+        speechThread.start() 
+        cls.threads.append(speechThread)
+        print(speechThread)
+
     @staticmethod
-    def SpeakText(command):       
+    def speech(command):
         engine.say(command)  
-        engine.runAndWait() 
+        engine.runAndWait()
 
     # write stuff to json, what else did you think this would do LMAO
 
@@ -544,7 +573,6 @@ class utilities:
         gender = input('What gender would you like your assistant to sound like?\n[ m ] Male\n[ f ] Female\n\n--> ')
         settings["gender"] = gender
         utilities.writeToJson(settings)       
-
 
 
 if __name__ == "__main__":
