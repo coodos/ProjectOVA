@@ -505,8 +505,6 @@ class naturalLanguage:
 
 class utilities: 
 
-    threads = []
-
     @staticmethod
     def startSlaves():
         chromecastchecker = threading.Thread(target=ccc.check, args=())
@@ -534,14 +532,6 @@ class utilities:
     
     @classmethod
     def SpeakText(cls, command):
-        speechThread = threading.Thread(target=utilities.speech, args=(command, )) 
-        speechThread.daemon = True
-        speechThread.start() 
-        cls.threads.append(speechThread)
-        print(speechThread)
-
-    @staticmethod
-    def speech(command):
         engine.say(command)  
         engine.runAndWait()
 
