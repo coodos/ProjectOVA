@@ -12,21 +12,27 @@ class youtubeAudio:
         except FileExistsError: 
             pass
         self.localName = utilities.getName(pytube.YouTube(link).title)
-        self.audio = pytube.YouTube(link).streams.filter(progressive=True).order_by('resolution').first()
-        self.audio.download('./temp/', filename=self.localName)
-
-        # Insert Local Video File Path  
-
-        clip = moviepy.VideoFileClip(f"./temp/{self.localName}.mp4")         
-        # Insert Local Audio File Path 
-        clip.audio.write_audiofile(f"./temp/{self.localName}.mp3") 
-
-        clip.close()
-
-        os.remove(f"./temp/{self.localName}.mp4")
         
-        self.sound = multiprocessing.Process(target=self.playAudio, args=(self, ))
-        self.sound.start()
+        if f'{self.localName}.mp3' in os.listdir("./temp/"):
+            self.sound = multiprocessing.Process(target=self.playAudio, args=(self, ))
+            self.sound.start()
+        else:
+
+            self.audio = pytube.YouTube(link).streams.filter(progressive=True).order_by('resolution').first()
+            self.audio.download('./temp/', filename=self.localName)
+
+            # Insert Local Video File Path  
+
+            clip = moviepy.VideoFileClip(f"./temp/{self.localName}.mp4")         
+            # Insert Local Audio File Path 
+            clip.audio.write_audiofile(f"./temp/{self.localName}.mp3") 
+
+            clip.close()
+
+            os.remove(f"./temp/{self.localName}.mp4")
+            
+            self.sound = multiprocessing.Process(target=self.playAudio, args=(self, ))
+            self.sound.start()
 
 
     def playAudio(self, arg):
