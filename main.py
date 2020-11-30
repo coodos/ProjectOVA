@@ -300,13 +300,15 @@ class voiceCommands:
 
         def __init__(self, keyword, fullcmd):
             self.keyword = keyword  
+            print(keyword, fullcmd)
             print(f"searching for {keyword}")
             try:
                 response = doge.query(keyword)
                 utilities.SpeakText(f'top result on internet says that, {response.related_topics[0].text}')
+                return
             except IndexError: 
-                pass
-
+                utilities.SpeakText("I can't seem to find any result for that")
+                return
     class googleCast:
 
         def __init__(self, device, fullcmd):
@@ -642,7 +644,7 @@ if __name__ == "__main__":
         while True: 
             
             try: 
-                # { mic ---> google api ---> text } ==> STONKS        
+                # { mic ---> sphinx ---> text } ==> STONKS        
                 # ^ /// ^      
                 with Recognizer.Microphone(device_index=micId) as source: 
                     recognizer.adjust_for_ambient_noise(source, duration=0.1)  
