@@ -52,6 +52,8 @@
 
 > can be triggered by saying : 'play song', 'play the song', 'play the track', 'play the music', 'play music', 'play track'
 
+***If you have any feature requests then please create an issue about the same!***
+
 > ## How to run locally
 
 1. git clone this repo 
