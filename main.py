@@ -417,6 +417,10 @@ class naturalLanguage:
         'web': [
             'search the web for',
             'search the web',
+            'search on the internet',
+            'search internet',
+            'search the internet for',
+            'search internet for',
             {
                 'command': voiceCommands.searchWeb
             }
