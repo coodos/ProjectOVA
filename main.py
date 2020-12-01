@@ -127,9 +127,12 @@ class voiceCommands:
             try: 
                 with open("todos.json", 'a+') as jsonFile: 
                     jsonFile.seek(0)
-                    utilities.SpeakText("you have the to dos. ")
-                    for todo in json.load(jsonFile)['todos']: 
-                        utilities.SpeakText(todo) 
+                    if json.load(jsonFile)['todos'] != []:
+                        utilities.SpeakText("you have the to dos. ")
+                        for todo in json.load(jsonFile)['todos']: 
+                            utilities.SpeakText(todo) 
+                    else: 
+                        utilities.SpeakText("it seems that you don't have anything to do! enjoy your day!")
 
             except json.decoder.JSONDecodeError:
                 utilities.SpeakText("it seems that you don't have anything to do! enjoy your day!")    
@@ -302,13 +305,14 @@ class voiceCommands:
             self.keyword = keyword  
             print(keyword, fullcmd)
             print(f"searching for {keyword}")
-            try:
-                response = doge.query(keyword)
-                utilities.SpeakText(f'top result on internet says that, {response.related_topics[0].text}')
-                return
-            except IndexError: 
-                utilities.SpeakText("I can't seem to find any result for that")
-                return
+            if 'search the' not in keyword:
+                try:
+                    response = doge.query(keyword)
+                    utilities.SpeakText(f'top result on internet says that, {response.related_topics[0].text}')
+                    return
+                except IndexError: 
+                    utilities.SpeakText("I can't seem to find any result for that")
+                    return
     class googleCast:
 
         def __init__(self, device, fullcmd):
@@ -385,11 +389,12 @@ class voiceCommands:
         def __init__(self, word, fullcmd): 
             print(f"searching for {word}")
             self.word = word
-            try:
-                self.meaning = ud.define(word)[0].definition
-                utilities.SpeakText(f"according to urban dictionary, {word} means {self.meaning}")
-            except Exception: 
-                utilities.SpeakText(f"oof, stupid urban dictionary doesn't even know the meaning of {word}.")
+            # try:
+            self.meaning = ud.define(word)[0].definition
+            utilities.SpeakText(f"according to urban dictionary, {word} means {self.meaning}")
+            # except Exception as e:
+            #     print(e) 
+            #     utilities.SpeakText(f"oof, stupid urban dictionary doesn't even know the meaning of {word}.")
             
 # Scuffed Natural Language Processing 
 # this class is gonna be * H E C T I C *
@@ -595,6 +600,9 @@ class utilities:
         settings["micID"] = device_id
         print("\n==============================================================\n")
         gender = input('What gender would you like your assistant to sound like?\n[ m ] Male\n[ f ] Female\n\n--> ')
+        print("\n==============================================================\n")
+        engine = input('What voice recognition engine would you like to use?\nPlease note that while CMU Sphinx is known to not log your data it is very unreliable. Google API is considerably better but well we all know how google is when it comes to privacy ¯\_(ツ)_/¯\n[ 0 ] Google\n[ 1 ] PocketSphinx\n\n==> ')
+        settings["engine"] = engine
         settings["gender"] = gender
         utilities.writeToJson(settings)       
 
@@ -619,6 +627,7 @@ if __name__ == "__main__":
                 settings = json.load(settingsFile)
                 triggerWord = settings["trigger"]
                 micId = int(settings["micID"])
+                voiceEngine = int(settings["engine"])
                 voiceGender = settings['gender']
         except KeyError or json.decoder.JSONDecodeError: 
             print("your local configuration appears to have been corrupted")
@@ -649,8 +658,14 @@ if __name__ == "__main__":
                 with Recognizer.Microphone(device_index=micId) as source: 
                     recognizer.adjust_for_ambient_noise(source, duration=0.1)  
                     audio = recognizer.listen(source) 
-                    MyText = recognizer.recognize_google(audio) 
-                    MyText = MyText.lower()
+                    if voiceEngine == 0:
+                        MyText = recognizer.recognize_google(audio)
+                        MyText = MyText.lower()
+                    elif voiceEngine ==1:
+                        MyText = recognizer.recognize_sphinx(audio)
+                        MyText = MyText.lower()
+                    else: 
+                        utilities.runConfigurator()
                     print(MyText)
                     if triggerWord in MyText: 
                         naturalLanguage(MyText, triggerWord)
