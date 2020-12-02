@@ -4,6 +4,8 @@ import os
 
 class guiMethods():
 
+    dirNum = 0
+
     # get the directory
     @staticmethod
     def getPath():
@@ -46,5 +48,5 @@ class guiMethods():
         root.mainloop()
 
 if __name__ == "__main__":
-
+    
     guiMethods.fileSearch()

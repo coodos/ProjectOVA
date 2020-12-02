@@ -18,7 +18,7 @@ import pychromecast
 from pychromecast.controllers.youtube import YouTubeController
 
 # in house 
-import datestuff as dateSig
+import datestuff as dateSig,
 import dictionaryAPI as dictAPI
 from winApps import winapps
 import chromecastchecker as ccc
@@ -708,7 +708,10 @@ if __name__ == "__main__":
                 pass
 
     if "settings.json" in os.listdir():
-        main()
+        try: 
+            main()
+        except Exception: 
+            utilities.runConfigurator()
     
     else: 
         utilities.runConfigurator()
