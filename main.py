@@ -17,7 +17,7 @@ from youtubesearchpython import SearchVideos
 import pychromecast
 from pychromecast.controllers.youtube import YouTubeController
 
-# homies
+# in house 
 import datestuff as dateSig
 import dictionaryAPI as dictAPI
 from winApps import winapps
@@ -25,6 +25,8 @@ import chromecastchecker as ccc
 from lowerUtils import lowerUtils as lU 
 from newsApi import news as newsApi
 from music import youtubeAudio
+import fileSearch
+from speechMath import speechMath as mathForSpeech
 
 # One Class to rule em all
 # One Class to find them 
@@ -32,6 +34,19 @@ from music import youtubeAudio
 # in the darkness and bind them 
 
 class voiceCommands:
+
+    class speechMath:
+
+        def __init__(self, arg, fullcmd):
+
+            mathObj = mathForSpeech(arg)
+            utilities.SpeakText(mathObj.getAnswer())
+
+    class searchFile:
+
+        def __init__(self, arg, fullcmd):
+
+            fileSearch.guiMethods.fileSearch() 
 
     # cless for ze myusike
 
@@ -371,7 +386,7 @@ class voiceCommands:
 
     
         def cccComparator(self, device):
-            with open('cache/chromecast.txt', 'r+') as f:
+            with open('temp/chromecast.txt', 'r+') as f:
                 shit = f.readlines()
                 newshit=[]
                 for element in shit:
@@ -517,6 +532,19 @@ class naturalLanguage:
             {
                 'command': voiceCommands.music
             }
+        ],
+        'fileSearch': [
+            'file search',
+            'document search',
+            {
+                'command': voiceCommands.searchFile
+            }
+        ], 
+        'math': [
+            'math', 
+            {
+                'command': voiceCommands.speechMath
+            }
         ]
     }
 
@@ -606,7 +634,6 @@ class utilities:
         settings["gender"] = gender
         utilities.writeToJson(settings)       
 
-
 if __name__ == "__main__":
 
     # so here we start the shitty recognizer
@@ -615,7 +642,7 @@ if __name__ == "__main__":
     recognizer = Recognizer.Recognizer()  
     engine = pyttsx3.init() 
     engine.setProperty('rate', 140)
-    
+   
     def main():
 
         utilities.startSlaves()
@@ -681,7 +708,7 @@ if __name__ == "__main__":
                 pass
 
     if "settings.json" in os.listdir():
-        main()       
+        main()
     
     else: 
         utilities.runConfigurator()

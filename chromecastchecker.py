@@ -7,7 +7,7 @@ def check():
     while True:
         try: 
             services, browser = pychromecast.discovery.discover_chromecasts()
-            with open('./cache/chromecast.txt', 'w+') as f:
+            with open('./temp/chromecast.txt', 'w+') as f:
                 devnames = []
                 for service in services:
                     devnames.append(service[3])
@@ -19,7 +19,7 @@ def check():
             time.sleep(10)
         except FileNotFoundError: 
             os.mkdir("cache")
-            with open('./cache/chromecast.txt', 'w+') as f:
+            with open('./temp/chromecast.txt', 'w+') as f:
                 devnames = []
                 for service in services:
                     devnames.append(service[3])
