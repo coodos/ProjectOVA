@@ -629,7 +629,7 @@ class utilities:
         print("\n==============================================================\n")
         gender = input('What gender would you like your assistant to sound like?\n[ m ] Male\n[ f ] Female\n\n--> ')
         print("\n==============================================================\n")
-        engine = input('What voice recognition engine would you like to use?\nPlease note that while CMU Sphinx is known to not log your data it is very unreliable. Google API is considerably better but well we all know how google is when it comes to privacy ¯\_(ツ)_/¯\n[ 0 ] Google\n[ 1 ] PocketSphinx\n\n==> ')
+        engine = input('What voice recognition engine would you like to use?\nPlease note that while CMU Sphinx is known to not log your data it is very unreliable. Google API is considerably better but well we all know how google is when it comes to privacy ¯\_(ツ)_/¯\n[ 0 ] Google\n[ 1 ] PocketSphinx\n\n--> ')
         settings["engine"] = engine
         settings["gender"] = gender
         utilities.writeToJson(settings)       

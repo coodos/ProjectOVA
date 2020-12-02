@@ -52,6 +52,14 @@
 
 > can be triggered by saying : 'play song', 'play the song', 'play the track', 'play the music', 'play music', 'play track'
 
+13. **FileSearch** : Want to search for a file, heck we now have a file search program!
+
+> can be triggered by saying : 'file search'
+
+14. **Math** : Finally we have math now!
+
+> can be triggered by saying : 'math'
+
 ***If you have any feature requests then please create an issue about the same!***
 
 > ## How to run locally
