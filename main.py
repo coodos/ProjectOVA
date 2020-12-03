@@ -5,6 +5,7 @@ import sys
 import subprocess
 import threading
 import difflib
+import multiprocessing
 
 # outcasts
 import bs4
@@ -46,7 +47,9 @@ class voiceCommands:
 
         def __init__(self, arg, fullcmd):
 
-            fileSearch.guiMethods.fileSearch() 
+            utilities.SpeakText('Opening file search dialog')
+            proc = multiprocessing.Process(target=fileSearch.guiMethods.fileSearch)
+            proc.start()
 
     # cless for ze myusike
 
@@ -708,11 +711,22 @@ if __name__ == "__main__":
                 pass
 
     if "settings.json" in os.listdir():
-        try: 
+
+        try:
             main()
-        except Exception: 
-            utilities.runConfigurator()
-    
+        except Exception:
+            print("your local configuration appears to have been corrupted")
+            print("Press [y] to continue with resseting your voice assistant or [n] to cancel")
+            inp = input("--> ")
+            if inp.lower().strip() == "y": 
+                utilities.runConfigurator()
+                main()
+            elif inp.lower().strip() == "n":
+                sys.exit()
+            else: 
+                print("ALERT : invalid input\n")
+                main()
+        
     else: 
         utilities.runConfigurator()
         main()
