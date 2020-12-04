@@ -19,7 +19,7 @@ import pychromecast
 from pychromecast.controllers.youtube import YouTubeController
 
 # in house 
-import datestuff as dateSig,
+import datestuff as dateSig
 import dictionaryAPI as dictAPI
 from winApps import winapps
 import chromecastchecker as ccc
